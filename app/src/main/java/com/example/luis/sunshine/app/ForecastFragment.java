@@ -1,10 +1,15 @@
 package com.example.luis.sunshine.app;
 
+
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,20 +24,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 /**
  * forecast fragment containing a simple view.
  */
 public class ForecastFragment extends Fragment {
 
     public ForecastFragment() {
+
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        setHasOptionsMenu(true);
 
-        //mock data
+        //mock database
         String[] forecastArray = {
                 "Today - Sunny - 88/63",
                 "Tomorrow - Foggy - 70/46",
@@ -48,25 +59,49 @@ public class ForecastFragment extends Fragment {
                 //The current context(this fragmetns parent activity)
                 getActivity(),
                 //ID of list item layout
-                R.layout.list_item_forecast,
-                //ID of the textview to populate
-                R.id.list_item_forecast_textview,
-                //weather data
-                weatherData);
+    R.layout.list_item_forecast,
+    //ID of the textview to populate
+    R.id.list_item_forecast_textview,
+    //weather data
+    weatherData);
 
-        ListView myListView = (ListView) rootView.findViewById(R.id.list_view_forecast);
-        myListView.setAdapter(mWeatherDataAdapter);
+    ListView myListView = (ListView) rootView.findViewById(R.id.list_view_forecast);
+    myListView.setAdapter(mWeatherDataAdapter);
 
-        FetchWeatherTask task = new FetchWeatherTask();
-        task.execute();
+//  task.execute();
 
-        return rootView;
+
+    return rootView;
+}
+
+
+    @Override
+    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.forecastfragment, menu);
+
     }
 
-    public class FetchWeatherTask extends AsyncTask<Void,Void,Void> {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+
+               FetchWeatherTask task = new FetchWeatherTask();
+               task.execute("94043");
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public class FetchWeatherTask extends AsyncTask<String,Void,Void> {
+
+        private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(Void... params) {// These two need to be declared outside the try/catch
+        protected Void doInBackground(String... params) {// These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -76,7 +111,19 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+                final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
+                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+                final String QUERY_PARAM = "q";
+                final String FORMAT_PARAM = "mode";
+                final String UNITS_PARAM = "units";
+                final String DAYS_PARAM = "cnt";
+
+                Uri builtUri=Uri.parse(FORECAST_BASE_URL).buildUpon()
+                        .appendQueryParameter(QUERY_PARAM,params[0])
+                        .appendQueryParameter(FORMAT_PARAM,"json")
+                        .appendQueryParameter(UNITS_PARAM,"metric")
+                        .appendQueryParameter(DAYS_PARAM,Integer.toString(7)).build();
+                URL url = new URL(builtUri.toString());
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -86,7 +133,7 @@ public class ForecastFragment extends Fragment {
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
                     // Nothing to do.
-                    forecastJsonStr = null;
+                    return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
@@ -98,14 +145,17 @@ public class ForecastFragment extends Fragment {
                 }
                 if (buffer.length() == 0) {
                     // Stream was empty. No point in parsing.
-                    forecastJsonStr = null;
+                    return null;
                 }
                 forecastJsonStr = buffer.toString();
+
+                Log.v(LOG_TAG,"Forecast JSON String: " + forecastJsonStr);
+
             } catch (IOException e) {
                 Log.e("ForecastFragment", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
-                forecastJsonStr = null;
+                return null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
