@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
+
+
 public class MainActivity extends ActionBarActivity {
 
     @Override
@@ -21,8 +23,6 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
