@@ -18,14 +18,13 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_detail);
-        Intent intent = getIntent();
-        String weatherDetails = intent.getStringExtra(ForecastFragment.EXTRA_MESSAGE);
-        TextView textView = new TextView(this);
-        textView.setTextSize(40);
-        textView.setText(weatherDetails);
-        setContentView(textView);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_detail);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new PlaceholderFragment())
+                    .commit();
+
+        }
     }
 
 
@@ -64,6 +63,16 @@ public class DetailActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            Intent intent = getActivity().getIntent();
+            // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if(intent!=null && intent.hasExtra(ForecastFragment.EXTRA_MESSAGE))
+            {
+                //pull forecast string from intent
+                String weatherDetails = intent.getStringExtra(ForecastFragment.EXTRA_MESSAGE);
+                ((TextView) rootView.findViewById(R.id.detail_text)).setText(weatherDetails);
+
+            }
+
             return rootView;
         }
     }
