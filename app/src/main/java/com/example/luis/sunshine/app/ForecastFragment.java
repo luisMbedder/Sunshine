@@ -94,14 +94,11 @@ public class ForecastFragment extends Fragment {
 
             Context context = getActivity();
             Object textObject= parent.getItemAtPosition(position);
-            CharSequence text=textObject.toString();
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            String forecast=textObject.toString();
 
             Intent intent = new Intent(context,DetailActivity.class);
-            intent.putExtra(EXTRA_MESSAGE,text);
-;            startActivity(intent);
+            intent.putExtra(EXTRA_MESSAGE,forecast);
+            startActivity(intent);
 
 
         }
