@@ -3,9 +3,11 @@ package com.example.luis.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -123,7 +125,11 @@ public class ForecastFragment extends Fragment {
             case R.id.action_refresh:
 
                FetchWeatherTask task = new FetchWeatherTask();
-                task.execute("Albuquerque");
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                //get location value, if no key is found use the default location
+                String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+               // String location = SettingsActivity.getDefaults(getString(R.string.pref_location_key), getActivity());
+                task.execute(location);
 
 
                 return true;

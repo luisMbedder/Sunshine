@@ -1,5 +1,6 @@
 package com.example.luis.sunshine.app;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -28,6 +29,8 @@ public class SettingsActivity extends PreferenceActivity
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
+        bindPreferenceSummaryToValue(findPreference("example_list"));
+
     }
 
     /**
@@ -61,7 +64,9 @@ public class SettingsActivity extends PreferenceActivity
             }
         } else {
             // For other preferences, set the summary to the value's simple string representation.
+            //the sharedPreferences value is also changed
             preference.setSummary(stringValue);
+
         }
         return true;
     }

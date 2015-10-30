@@ -18,7 +18,7 @@
 
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_title_location">Location</string>
-    <string name="pref_location_default" translatable="false">87121</string>
+    <string name="pref_location_default" translatable="false">Albuquerque</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
