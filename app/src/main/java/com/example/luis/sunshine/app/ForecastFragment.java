@@ -63,19 +63,6 @@ public class ForecastFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
 
-        //mock database
-        String[] forecastArray = {
-                "Today - Sunny - 88/63",
-                "Tomorrow - Foggy - 70/46",
-                "Weds - Cloudy - 72/63",
-                "Thurs - Rainy - 64/51",
-                "Fri - Foggy - 70/46",
-                "Sat - Sunny - 76/68",
-        };
-
-
-
-        ArrayList<String> weatherData = new ArrayList<String>(Arrays.asList(forecastArray));
          mWeatherDataAdapter = new ArrayAdapter<String>(
                 //The current context(this fragmetns parent activity)
                 getActivity(),
@@ -84,7 +71,7 @@ public class ForecastFragment extends Fragment {
     //ID of the textview so arrayadpater knows how to instantiate a TextView for each row
     R.id.list_item_forecast_textview,
     //weather data
-    weatherData);
+    new ArrayList<String>());
     //create listview class and use textview objects for each row to populate the list.
     // each weather day is rendered in a textview. So each row in the listview(defined in
     // fragment_main.xml) is a textview defined by list_item_forecast.xml
@@ -123,20 +110,30 @@ public class ForecastFragment extends Fragment {
         // handle item selection
         switch (item.getItemId()) {
             case R.id.action_refresh:
-
-               FetchWeatherTask task = new FetchWeatherTask();
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                //get location value, if no key is found use the default location
-                String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-               // String location = SettingsActivity.getDefaults(getString(R.string.pref_location_key), getActivity());
-                task.execute(location);
-
-
+                updateWeather();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void updateWeather()
+    {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //get location value, if no key is found use the default location
+        String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        // String location = SettingsActivity.getDefaults(getString(R.string.pref_location_key), getActivity());
+        weatherTask.execute(location);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateWeather();
+    }
+
+
 
     public class FetchWeatherTask extends AsyncTask<String,Void,String[]> {
 
@@ -274,7 +271,7 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter(FORMAT_PARAM,"json")
                         .appendQueryParameter(UNITS_PARAM,"metric")
                         .appendQueryParameter(DAYS_PARAM, Integer.toString(7))
-                        .appendQueryParameter(APP_ID, "bd82977b86bf27fb59a04b61b657fb6f").build();
+                        .appendQueryParameter(APP_ID, "69cbb710b1fb7c55db947225d8e802ad").build();
                 URL url = new URL(builtUri.toString());
 
 
