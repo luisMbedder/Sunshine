@@ -123,7 +123,6 @@ public class ForecastFragment extends Fragment {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         //get location value, if no key is found use the default location
         String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        // String location = SettingsActivity.getDefaults(getString(R.string.pref_location_key), getActivity());
         weatherTask.execute(location);
     }
 
@@ -153,10 +152,24 @@ public class ForecastFragment extends Fragment {
         /**
          * Prepare the weather high/lows for presentation.
          */
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double highTemp, double lowTemp) {
+
+            // metric or imperial units
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String units = sharedPref.getString(getString(R.string.pref_temperature_units_key), getString(R.string.pref_units_metric));
+            if(units.equals(getString(R.string.pref_units_imperial)))
+            {
+                //convert from celcius to farenheit
+                highTemp = (highTemp*1.8)+32;
+                lowTemp = (lowTemp*1.8)+32;
+            }
+            else if(!units.equals(getString(R.string.pref_units_metric)))
+            {
+                Log.d(LOG_TAG,"Unit type not found:"+units);
+            }
             // For presentation, assume the user doesn't care about tenths of a degree.
-            long roundedHigh = Math.round(high);
-            long roundedLow = Math.round(low);
+            long roundedHigh = Math.round(highTemp);
+            long roundedLow = Math.round(lowTemp);
 
             String highLowStr = roundedHigh + "/" + roundedLow;
             return highLowStr;
