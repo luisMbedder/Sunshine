@@ -4,6 +4,7 @@ package com.example.luis.sunshine.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.content.pm.PackageManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,11 +83,11 @@ public class ForecastFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             Context context = getActivity();
-            Object textObject= parent.getItemAtPosition(position);
-            String forecast=textObject.toString();
+            Object textObject = parent.getItemAtPosition(position);
+            String forecast = textObject.toString();
 
-            Intent intent = new Intent(context,DetailActivity.class);
-            intent.putExtra(EXTRA_MESSAGE,forecast);
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra(EXTRA_MESSAGE, forecast);
             startActivity(intent);
 
 
@@ -125,6 +126,9 @@ public class ForecastFragment extends Fragment {
         String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
         weatherTask.execute(location);
     }
+
+
+
 
     @Override
     public void onStart(){

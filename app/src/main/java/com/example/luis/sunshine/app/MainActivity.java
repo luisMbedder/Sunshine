@@ -2,7 +2,10 @@ package com.example.luis.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,16 +46,33 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        switch(id) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                // intent.putExtra(EXTRA_MESSAGE,forecast);
+                startActivity(intent);
+                return true;
 
-            Intent intent = new Intent(this,SettingsActivity.class);
-           // intent.putExtra(EXTRA_MESSAGE,forecast);
-            startActivity(intent);
-            return true;
+            case R.id.action_map_location:
+                showLocationOnMap();
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    private void showLocationOnMap()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q",location).build();
+        Intent mapIntent = new Intent();
+        mapIntent.setAction(Intent.ACTION_VIEW);
+        mapIntent.putExtra("location", location);
+        mapIntent.setData(geoLocation);
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+
+    }
 
 }

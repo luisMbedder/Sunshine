@@ -10,7 +10,7 @@ import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 
 /**
- * A {@link PreferenceActivity} that presents a set of application settings.
+ * A {@link PreferenceActivity} that presents a set of application settings. list.addHeaderView(header, null, false);lis
  * <p>
  * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
