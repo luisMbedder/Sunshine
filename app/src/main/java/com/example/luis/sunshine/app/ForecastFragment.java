@@ -48,51 +48,60 @@ public class ForecastFragment extends Fragment {
 
     public ForecastFragment() {
 
-
+int a=0;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle menu events.
+        // this fragment has menu items to contribute(Refresh button)
         setHasOptionsMenu(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    //creates and returns the view heirarchy associated with the fragment
+    //inflater: LayoutInflater object that can be used to inflate any views in the fragment
+    // ViewGroup:if non-null,this is the parent view that the fragment's UI should be attached to.
+    // The fragment should not add the view itself, but this can be used to generate the LayoutParams of the view.
+    //SavedInstanceState:If non-null, this fragment is being re-constructed from a previous saved state as given here.
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        //inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        setHasOptionsMenu(true);
 
-         mWeatherDataAdapter = new ArrayAdapter<String>(
-                //The current context(this fragmetns parent activity)
+        mWeatherDataAdapter = new ArrayAdapter<String>
+                (
+                //The current context(this fragments parent activity)
                 getActivity(),
                 //ID of list item layout
-    R.layout.list_item_forecast,
-    //ID of the textview so arrayadpater knows how to instantiate a TextView for each row
-    R.id.list_item_forecast_textview,
-    //weather data
-    new ArrayList<String>());
-    //create listview class and use textview objects for each row to populate the list.
-    // each weather day is rendered in a textview. So each row in the listview(defined in
-    // fragment_main.xml) is a textview defined by list_item_forecast.xml
-    ListView myListView = (ListView) rootView.findViewById(R.id.list_view_forecast);
-    myListView.setAdapter(mWeatherDataAdapter);
-    myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            Context context = getActivity();
-            Object textObject = parent.getItemAtPosition(position);
-            String forecast = textObject.toString();
-
-            Intent intent = new Intent(context, DetailActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, forecast);
-            startActivity(intent);
-
-
-        }
-    });
+                R.layout.list_item_forecast,
+                //ID of the textview so arrayadpater knows how to instantiate a TextView for each row
+                R.id.list_item_forecast_textview,
+                //weather data
+                new ArrayList<String>()
+                );
+                //create listview and use textview objects for each row to populate the list.
+                // each weather day is rendered in a textview. So each row in the listview(defined in
+                // fragment_main.xml) is a textview defined by list_item_forecast.xml
+                ListView myListView = (ListView) rootView.findViewById(R.id.list_view_forecast);
+                myListView.setAdapter(mWeatherDataAdapter);
+                //Register a callback to be invoked when an item in this AdapterView has been clicked
+                myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    //  Callback method to be invoked when an item in this AdapterView has been clicked.
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //get activity the fragment is associated with
+                        Context context = getActivity();
+                        //parent:The adapterview where the click happened
+                        Object textObject = parent.getItemAtPosition(position);
+                        String forecast = textObject.toString();
+                        //starting a new activity is packaged as an intent
+                        Intent intent = new Intent(context, DetailActivity.class);
+                        intent.putExtra(EXTRA_MESSAGE, forecast);
+                        //start detail Activity
+                        startActivity(intent);
+                    }
+                });
 //  task.execute();
 
 
@@ -101,6 +110,7 @@ public class ForecastFragment extends Fragment {
 
 
     @Override
+    //this is called by setting setHasOptionsMenu(true)
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
 
@@ -358,7 +368,8 @@ public class ForecastFragment extends Fragment {
 
         }
 
-        //this method runs on the UI thread
+        //this method runs on the UI thread, its invoked when doInBackground() finishes.The result
+        //of doInBackground() is passed to this method as a parameter.
         @Override
         protected void onPostExecute(String[] result) {
             if(result!=null) {

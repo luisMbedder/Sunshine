@@ -12,21 +12,25 @@ import android.view.MenuItem;
 
 
 
-
+//add an action bar to the activity
 public class MainActivity extends ActionBarActivity {
 
+    //onCreate() creates a new  Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //sets the activity content with a layout that defines the UI
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_launcher);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        //get a reference to the actionBar object by calling getSupportActionBar()
+        getSupportActionBar().setDisplayShowHomeEnabled(true); //include the app logo
+        getSupportActionBar().setLogo(R.drawable.ic_launcher);//set the logo
+        getSupportActionBar().setDisplayUseLogoEnabled(true);//display app logo
 
+            // add fragment to activity
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
-                    .commit();
+                    .add(R.id.container, new ForecastFragment())//add the fragment to the container
+                    .commit();//complete the changes added above
         }
 
     @Override
@@ -71,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
         mapIntent.setData(geoLocation);
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
-        }
+    }
 
     }
 
