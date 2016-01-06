@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuInflater;
-import android.widget.ShareActionProvider;
+//import android.widget.ShareActionProvider;
+import android.support.v7.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +28,11 @@ public class DetailActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
-            // add placeholder fragment to Detail activity
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DetailFragment())
-                    .commit();
+            // add DetailFragment to Detail activity
+            getSupportFragmentManager().beginTransaction().add(R.id.container, new DetailFragment()).commit();
 
         }
     }
-
 
     @Override
     //this method is onyl called the first time the options menu is displayed
@@ -56,17 +56,6 @@ public class DetailActivity extends ActionBarActivity {
             startActivity(intent);
             return true;
         }
-        if(id == R.id.menu_item_share)
-        {
-       /*     Intent shareIntent = DetailFragment.shareMenuItem();
-              if (shareIntent.resolveActivity(getPackageManager()) != null)
-             {
-                  startActivity(shareIntent);
-             }*/
-
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -91,13 +80,26 @@ public class DetailActivity extends ActionBarActivity {
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
         {
             //Inflate menu resource file
-            inflater.inflate(R.menu.detailfragment,menu);
+            inflater.inflate(R.menu.detailfragment, menu);
 
             //Locate MenuItem with ShareActionProvider
             MenuItem item = menu.findItem(R.id.menu_item_share);
             //Get the provider and hold onto it to set/change the share intent.
-            mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+            //The action initially appears as a button or menu item, but when the user clicks the action,
+            // the action provider controls the action's behavior in any way you want to define.
+            // For example, the action provider might respond to a click by displaying a menu.
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
+            //Attach an intent to this ShareActionProvider. You can update this at an time,
+            //like when the user selects a new piece of data they might like to share.
+            if(mShareActionProvider!=null)
+            {
+                mShareActionProvider.setShareIntent(createShareMenuIntent());
+            }
+            else
+            {
+                Log.d(LOG_TAG, "Share Action Provider is null!");
+            }
 
         }
 
@@ -118,19 +120,14 @@ public class DetailActivity extends ActionBarActivity {
             return rootView;
         }
 
-        private Intent shareMenuItem() {
-
+        private Intent createShareMenuIntent()
+        {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, weatherDetails + FORECAST_SHARE_HASHTAG);
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, weatherDetails + FORECAST_SHARE_HASHTAG);
             shareIntent.setType("text/plain");
             return shareIntent;
-          //  if (shareIntent.resolveActivity(getPackageManager()) != null)
-          //  {
-         //       startActivity(shareIntent);
-          //  }
-
         }
     }
 
