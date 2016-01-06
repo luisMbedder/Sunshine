@@ -7,10 +7,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuInflater;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,11 +58,11 @@ public class DetailActivity extends ActionBarActivity {
         }
         if(id == R.id.menu_item_share)
         {
-            Intent shareIntent = DetailFragment.shareMenuItem();
+       /*     Intent shareIntent = DetailFragment.shareMenuItem();
               if (shareIntent.resolveActivity(getPackageManager()) != null)
              {
                   startActivity(shareIntent);
-             }
+             }*/
 
             return true;
         }
@@ -75,6 +76,7 @@ public class DetailActivity extends ActionBarActivity {
     public static class DetailFragment extends Fragment {
 
         private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+        private  ShareActionProvider mShareActionProvider;
 
         private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
         private String weatherDetails;
@@ -88,7 +90,14 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
         {
+            //Inflate menu resource file
             inflater.inflate(R.menu.detailfragment,menu);
+
+            //Locate MenuItem with ShareActionProvider
+            MenuItem item = menu.findItem(R.id.menu_item_share);
+            //Get the provider and hold onto it to set/change the share intent.
+            mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
 
         }
 
